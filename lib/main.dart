@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:get/get.dart';
+import 'package:minora/controllers/ble_controller.dart';
 
 void main() {
   runApp(const MainApp());
@@ -18,65 +20,61 @@ class MainApp extends StatelessWidget {
         brightness: Brightness.dark,
       )),
       // color: Theme.of(context).colorScheme.primary,
-      home: const BluetoothDeviceListScreen(),
+      home: const RootPage(),
     );
   }
 }
 
-// class RootPage extends StatefulWidget {
-//   const RootPage({super.key});
+class RootPage extends StatefulWidget {
+  const RootPage({super.key});
 
-//   @override
-//   State<RootPage> createState() => _RootPageState();
-// }
+  @override
+  State<RootPage> createState() => _RootPageState();
+}
 
-// class _RootPageState extends State<RootPage> {
-//   final FlutterBlue flutterBlue = FlutterBlue.instance;
-//   List<BluetoothDevice> _devices = [];
+class _RootPageState extends State<RootPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("minora"),
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        ),
+        body: GetBuilder<BLEController>(
+          init: BLEController(),
+          builder: (BLEController controller) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  StreamBuilder<List<ScanResult>>(
+                      stream: controller.scanResults,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                              itemBuilder: (context, index) {
+                            final data = snapshot.data![index];
+                            return ListTile(
+                              title: Text(data.device.name),
+                              subtitle: Text(data.device.id.id),
+                            );
+                          });
+                        } else {
+                          return const Center(
+                            child: Text("No se encontraron"),
+                          );
+                        }
+                      }),
+                  ElevatedButton(onPressed: () => controller.scanDevices(), child: const Text("Escanear"))
+                ],
+              ),
+            );
+          },
+        ));
+  }
+}
 
-//   Future<List<BluetoothDevice>> scanDevices() async {
-//     List<BluetoothDevice> devices = [];
-
-//     try {
-//       // Start scanning for Bluetooth devices
-//       await flutterBlue.startScan(timeout: const Duration(seconds: 4));
-
-//       // Listen for discovered devices
-//       flutterBlue.scanResults.listen((results) {
-//         for (ScanResult result in results) {
-//           if (!devices.contains(result.device)) {
-//             devices.add(result.device);
-//           }
-//         }
-//       });
-
-//       // Wait for the scan to complete
-//       await Future.delayed(const Duration(seconds: 4));
-
-//       // Stop scanning
-//       await flutterBlue.stopScan();
-//     } catch (e) {
-//       print('Error scanning for devices: $e');
-//     }
-
-//     return devices;
-//   }
-
-//   Future<void> _scanDevices() async {
-//     List<BluetoothDevice> devices = await scanDevices();
-//     setState(() {
-//       _devices = devices;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text("minora"),
-//         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-//       ),
-//       body: ListView.builder(
+// ListView.builder(
 //         itemCount: _devices.length,
 //         itemBuilder: (context, index) {
 //           return ListTile(
@@ -85,84 +83,7 @@ class MainApp extends StatelessWidget {
 //           );
 //         },
 //       ),
-//       floatingActionButton: FloatingActionButton(
+// floatingActionButton: FloatingActionButton(
 //         onPressed: () => _scanDevices(),
 //         child: const Icon(Icons.refresh_outlined),
 //       ),
-//     );
-//   }
-// }
-
-
-class BluetoothDeviceListScreen extends StatefulWidget {
-  const BluetoothDeviceListScreen({super.key});
-
-  @override
-  // _BluetoothDeviceListScreenState createState() => _BluetoothDeviceListScreenState();
-  State<BluetoothDeviceListScreen> createState() => _BluetoothDeviceListScreenState();
-}
-
-class _BluetoothDeviceListScreenState extends State<BluetoothDeviceListScreen> {
-  List<BluetoothDevice> _devices = [];
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    _scanDevices();
-  }
-
-  Future<List<BluetoothDevice>> scanDevices() async {
-  List<BluetoothDevice> devices = [];
-
-  try {
-    // Start scanning for Bluetooth devices
-    await flutterBlue.startScan(timeout: const Duration(seconds: 4));
-
-    // Listen for discovered devices
-    flutterBlue.scanResults.listen((results) {
-      for (ScanResult result in results) {
-        if (!devices.contains(result.device)) {
-          devices.add(result.device);
-        }
-      }
-    });
-
-    // Wait for the scan to complete
-    await Future.delayed(const Duration(seconds: 4));
-
-    // Stop scanning
-    await flutterBlue.stopScan();
-  } catch (e) {
-    print('Error scanning for devices: $e');
-  }
-
-  return devices;
-}
-
-  Future<void> _scanDevices() async {
-    List<BluetoothDevice> devices = await scanDevices();
-    setState(() {
-      _devices = devices;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bluetooth Devices'),
-      ),
-      body: ListView.builder(
-        itemCount: _devices.length,
-        itemBuilder: (context, index) {
-          BluetoothDevice device = _devices[index];
-          return ListTile(
-            title: Text(device.name),
-            subtitle: Text(device.id.toString()),
-          );
-        },
-      ),
-    ); 
-  }
-}
