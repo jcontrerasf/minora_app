@@ -9,9 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_blue: ^0.8.0
-  get: ^4.6.6
+  flutter_reactive_ble: ^5.3.1
   permission_handler: ^11.3.1
+  simple_logger: ^1.9.0+3
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
