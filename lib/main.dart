@@ -1,3 +1,5 @@
+//Basado en: https://github.com/janaka92/flutter_bluetooth
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -55,12 +57,19 @@ class _RootPageState extends State<RootPage> {
           return ListTile(
             title: Text(discoveredDevices[index].name),
             subtitle: Text(discoveredDevices[index].id.toString()),
+            trailing: ElevatedButton(
+              onPressed: () {
+                DiscoveredDevice selectedDevice = discoveredDevices[index];
+                connectToDevice(selectedDevice);
+              },
+              child: const Icon(Icons.settings_bluetooth_rounded),
+            ),
           );
         },
       ),
         floatingActionButton: FloatingActionButton(
-        onPressed: () => startScan(),
-        child: const Icon(Icons.refresh_outlined),
+        onPressed: () => isScanStarted ? stopScan() : startScan(),
+        child: Icon(isScanStarted ? Icons.stop : Icons.refresh_rounded),
       ),
     );
   }
@@ -107,18 +116,19 @@ class _RootPageState extends State<RootPage> {
       isScanStarted = false;
     });
   }
-}
 
-// ListView.builder(
-//         itemCount: _devices.length,
-//         itemBuilder: (context, index) {
-//           return ListTile(
-//             title: Text(_devices[index].name),
-//             subtitle: Text(_devices[index].id.toString()),
-//           );
-//         },
-//       ),
-// floatingActionButton: FloatingActionButton(
-//         onPressed: () => _scanDevices(),
-//         child: const Icon(Icons.refresh_outlined),
-//       ),
+  Future<void> connectToDevice(DiscoveredDevice selectedDevice) async {
+    await stopScan();
+    communicationHandler?.connectToDevice(selectedDevice, (isConnected) {
+      this.isConnected = isConnected;
+      // if (isConnected) {
+      //   connectedDeviceDetails = "Connected Device Details\n\n$selectedDevice";
+      // } else {
+      //   connectedDeviceDetails = "";
+      // }
+      // setState(() {
+      //   connectedDeviceDetails;
+      // });
+    });
+  }
+}

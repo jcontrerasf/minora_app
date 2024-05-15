@@ -20,5 +20,15 @@ class CommunicationHandler {
   Future<void> stopScan() async {
     await bleConnectionHandler.stopScan();
   }
+
+  void connectToDevice(DiscoveredDevice discoveredDevice, Function(bool) connectionStatus) {
+    bleConnectionHandler.connectToDevice(discoveredDevice, (isConnected) {
+      deviceId = discoveredDevice.id;
+      connectionStatus(isConnected);
+      if(isConnected) {
+        logger.info("Conectado correctamente a ${discoveredDevice.name}");
+      }
+    });
+  }
   
 }
