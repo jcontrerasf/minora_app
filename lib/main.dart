@@ -60,12 +60,13 @@ class _RootPageState extends State<RootPage> {
             subtitle: Text(discoveredDevices[index].id.toString()),
             trailing: ElevatedButton(
               onPressed: () {
-                // DiscoveredDevice selectedDevice = discoveredDevices[index];
+                stopScan();
+                DiscoveredDevice selectedDevice = discoveredDevices[index];
                 // connectToDevice(selectedDevice);
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context){
-                      return const ConnectedDevicePage();
+                      return ConnectedDevicePage(device: selectedDevice, handler: communicationHandler,);
                     },
                   ),
                 );
