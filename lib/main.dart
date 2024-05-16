@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:minora/ble/communication_handler.dart';
+import 'package:minora/connected_device_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:simple_logger/simple_logger.dart';
 
@@ -59,8 +60,15 @@ class _RootPageState extends State<RootPage> {
             subtitle: Text(discoveredDevices[index].id.toString()),
             trailing: ElevatedButton(
               onPressed: () {
-                DiscoveredDevice selectedDevice = discoveredDevices[index];
-                connectToDevice(selectedDevice);
+                // DiscoveredDevice selectedDevice = discoveredDevices[index];
+                // connectToDevice(selectedDevice);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context){
+                      return const ConnectedDevicePage();
+                    },
+                  ),
+                );
               },
               child: const Icon(Icons.settings_bluetooth_rounded),
             ),
