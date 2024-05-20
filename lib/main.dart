@@ -58,11 +58,11 @@ class _RootPageState extends State<RootPage> {
           return ListTile(
             title: Text(discoveredDevices[index].name),
             subtitle: Text(discoveredDevices[index].id.toString()),
+            //TODO: mostrar este botón solo si es un reloj minora
             trailing: ElevatedButton(
               onPressed: () {
                 stopScan();
                 DiscoveredDevice selectedDevice = discoveredDevices[index];
-                // connectToDevice(selectedDevice);
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context){
@@ -126,10 +126,10 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
-  Future<void> connectToDevice(DiscoveredDevice selectedDevice) async {
-    await stopScan();
-    communicationHandler?.connectToDevice(selectedDevice, (isConnected) {
-      this.isConnected = isConnected;
+  // Future<void> connectToDevice(DiscoveredDevice selectedDevice) async {
+  //   await stopScan();
+  //   communicationHandler?.connectToDevice(selectedDevice, (isConnected) {
+  //     this.isConnected = isConnected;
       // if (isConnected) {
       //   connectedDeviceDetails = "Connected Device Details\n\n$selectedDevice";
       // } else {
@@ -138,6 +138,6 @@ class _RootPageState extends State<RootPage> {
       // setState(() {
       //   connectedDeviceDetails;
       // });
-    });
-  }
+  //   });
+  // }
 }

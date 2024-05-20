@@ -4,7 +4,8 @@ import 'package:minora/ble/communication_handler.dart';
 import 'package:simple_logger/simple_logger.dart';
 
 class ConnectedDevicePage extends StatefulWidget {
-  const ConnectedDevicePage({ super.key , required this.device, required this.handler});
+  const ConnectedDevicePage(
+      {super.key, required this.device, required this.handler});
 
   final DiscoveredDevice device;
   final CommunicationHandler? handler;
@@ -14,31 +15,47 @@ class ConnectedDevicePage extends StatefulWidget {
 }
 
 class _ConnectedDevicePageState extends State<ConnectedDevicePage> {
-
   bool isConnected = false;
   SimpleLogger logger = SimpleLogger();
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.device.name),
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: (){
-            //TODO: desconectar
+          onPressed: () {
+            widget.handler?.disconnectDevice();
             Navigator.of(context).pop();
           },
         ),
       ),
+      body: Builder(
+        builder: (context) {
+          if(!isConnected){
+            return const Padding(
+              padding: EdgeInsets.only(top: 50.0),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }else{
+            return const Column(
+              children: [
+                Text("Conectado"),
+                Text("data 2")
+              ],
+            );
+          }
+        }),
     );
   }
 
   @override
   void initState() {
     super.initState();
-    logger.warning("Iniciando");
     connectToDevice(widget.device);
   }
 
@@ -53,9 +70,10 @@ class _ConnectedDevicePageState extends State<ConnectedDevicePage> {
         // connectedDeviceDetails = "";
         logger.info("Error al intentar conectar");
       }
-      // setState(() {
-      //   connectedDeviceDetails;
-      // });
+      setState(() {
+        // connectedDeviceDetails;
+        isConnected;
+      });
     });
   }
 }
