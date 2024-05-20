@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:minora/ble/communication_handler.dart';
+import 'package:minora/text_input.dart';
 import 'package:simple_logger/simple_logger.dart';
 
 class ConnectedDevicePage extends StatefulWidget {
@@ -27,7 +28,7 @@ class _ConnectedDevicePageState extends State<ConnectedDevicePage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            widget.handler?.disconnectDevice();
+            // widget.handler?.disconnectDevice();
             Navigator.of(context).pop();
           },
         ),
@@ -35,18 +36,23 @@ class _ConnectedDevicePageState extends State<ConnectedDevicePage> {
       body: Builder(
         builder: (context) {
           if(!isConnected){
-            return const Padding(
-              padding: EdgeInsets.only(top: 50.0),
-              child: Center(
-                child: CircularProgressIndicator(),
+            return const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 8.0,
+                strokeCap: StrokeCap.round,              
               ),
             );
           }else{
-            return const Column(
-              children: [
-                Text("Conectado"),
-                Text("data 2")
-              ],
+            return const Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Conectado"),
+                  TextInput(text: "WiFi SSID",),
+                  TextInput(text: "WiFi Password",)
+                ],
+              ),
             );
           }
         }),
